@@ -8,7 +8,10 @@ export const chatHttpApi: () => AxiosInstance = () => {
   api.defaults.headers.common["Content-Type"] =
     "application/json; charset=utf-8";
 
-  // TODO Configure the api object.
+  const token = localStorage.getItem("token");
+  if (token) {
+    api.defaults.headers.common["Authorization"] = "Bearer " + token;
+  }
 
   return api;
 };

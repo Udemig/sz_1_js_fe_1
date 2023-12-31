@@ -7,9 +7,16 @@ import {
   Navbar,
   Offcanvas,
 } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { AuthStateType } from "../../redux/slice/authSlice";
+import { RootState } from "../../redux/store";
 
 export default function Header() {
+  const authState = useSelector<RootState, AuthStateType>(
+    (state) => state.authState
+  );
+
   const expand = "md";
   return (
     <header>
@@ -37,17 +44,31 @@ export default function Header() {
                 <Link to="/chat" className="nav-link">
                   Chat
                 </Link>
-                <NavDropdown
-                  title="Auth"
-                  id={`offcanvasNavbarDropdown-expand-${expand}`}
-                >
-                  <Link to="auth/login" className="dropdown-item">
-                    Login
-                  </Link>
-                  <Link to="auth/register" className="dropdown-item">
-                    Register
-                  </Link>
-                </NavDropdown>
+
+                {authState.user ? (
+                  <Form className="d-flex">
+                    &nbsp; &nbsp; &nbsp; &nbsp;
+                    <Link
+                      to="/user/profile"
+                      className="btn btn-outline-primary me-2"
+                    >
+                      {authState.user.username}
+                    </Link>
+                    <Button variant="outline-danger">Logout</Button>
+                  </Form>
+                ) : (
+                  <NavDropdown
+                    title="Auth"
+                    id={`offcanvasNavbarDropdown-expand-${expand}`}
+                  >
+                    <Link to="auth/login" className="dropdown-item">
+                      Login
+                    </Link>
+                    <Link to="auth/register" className="dropdown-item">
+                      Register
+                    </Link>
+                  </NavDropdown>
+                )}
               </Nav>
               <Form className="d-flex">
                 <Form.Control

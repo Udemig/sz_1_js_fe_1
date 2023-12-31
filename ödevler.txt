@@ -1,0 +1,3 @@
+- Login sayfasına authState.requestStatus'un pending olup olmamasına
+  göre formu kaplayan bir loading kutusu ekleyin. Bu loading kutusunun
+  z-index değeri hepsinden yüksek olmalı.

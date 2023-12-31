@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import RoomBox from "../../components/room-box";
 
 export default function HomePage() {
@@ -11,9 +12,9 @@ export default function HomePage() {
               Welcome to the only and real address of quality chat.
             </p>
             <p>
-              <a href="#" className="btn btn-primary mx-1">
-                Main call to action
-              </a>
+              <Link to="/room/create" className="btn btn-primary mx-1">
+                Create Room
+              </Link>
               <a href="#" className="btn btn-secondary mx-1">
                 Secondary action
               </a>
