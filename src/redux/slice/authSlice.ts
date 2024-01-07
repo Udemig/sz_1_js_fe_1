@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { chatHttpApi } from "../../utils/api";
+import { AsyncStatus } from "./utils";
 
 /* api objesini burada tutarsak uygulama boyunca sadece bir tane
 api objemiz olur, o zaman da axios'un eski halini (yani güncellenmemiş
@@ -20,8 +21,10 @@ export type AuthRegisterDataType = {
   gender: "male" | "female" | "prefer_not_to_say";
 };
 
+/* Thunk isimleri ile url adresleri birbirine benzemesin diye thunk isimlerinde
+slaş yerine nokta kullanalım. */
 export const loginAction = createAsyncThunk(
-  "auth/login",
+  "auth.login",
   async (data: AuthLoginDataType, thunkAPI) => {
     const api = chatHttpApi();
     const response = await api.post("/auth/login", data);
@@ -31,7 +34,7 @@ export const loginAction = createAsyncThunk(
 );
 
 export const registerAction = createAsyncThunk(
-  "auth/register",
+  "auth.register",
   async (data: AuthRegisterDataType, thunkAPI) => {
     const api = chatHttpApi();
     const response = await api.post("/auth/register", data);
@@ -41,26 +44,23 @@ export const registerAction = createAsyncThunk(
 );
 
 export const logoutAction = createAsyncThunk(
-  "auth/logout",
-  async (data: AuthLoginDataType, thunkAPI) => {
+  "auth.logout",
+  async (data: undefined, thunkAPI) => {
     const api = chatHttpApi();
-    const response = await api.post("/auth/login", data);
+    const response = await api.post("/user/logout", data);
 
     return response.data;
   }
 );
 
 export const getUserInfoAction = createAsyncThunk(
-  "user/me",
+  "user.me",
   async (thunkAPI) => {
     const api = chatHttpApi();
     const response = await api.get("/user/me");
     return response.data;
   }
 );
-
-// TODO Move this to general area.
-export type AsyncStatus = "idle" | "pending" | "fulfilled" | "rejected";
 
 export type UserType = {
   username: string;
@@ -130,9 +130,27 @@ export const authSlice = createSlice({
     });
     builder.addCase(registerAction.fulfilled, (state, action) => {
       // TODO Add status check condition here.
+      // TODO localStorage'daki token bazen undefined oluyor, bu problemi çöz.
 
-      localStorage.setItem("token", action.payload.data.token);
-      state.token = action.payload.data.token;
+      //localStorage.setItem("token", action.payload.data.token);
+      //state.token = action.payload.data.token;
+      state.requestStatus = "fulfilled";
+      state.errorMessage = null;
+    });
+
+    // logout action
+    builder.addCase(logoutAction.pending, (state, action) => {
+      state.requestStatus = "pending";
+      state.errorMessage = null;
+    });
+    builder.addCase(logoutAction.rejected, (state, action) => {
+      state.requestStatus = "rejected";
+      state.errorMessage = null;
+    });
+    builder.addCase(logoutAction.fulfilled, (state, action) => {
+      localStorage.removeItem("token");
+      state.token = null;
+      state.user = null;
       state.requestStatus = "fulfilled";
       state.errorMessage = null;
     });

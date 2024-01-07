@@ -1,8 +1,11 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AuthContext from "./context/auth-context";
 import LayoutContext from "./context/layout-context";
-import CreateRoomPage from "./pages/room/create-room-page";
+import WebsocketContext from "./context/websocket-context";
+import { getLastRoomsAction } from "./redux/slice/roomSlice";
+import { RootState, appDispatch } from "./redux/store";
 
 /* Bazı componentlerin kullanıcıya hemen gösterilmesi gerekmeyebilir.
 Örneğin kullanıcı anasayfadayken chat sayfasının hemen yüklenmesi
@@ -24,16 +27,27 @@ const ChatPage = lazy(() => import("./pages/chat-page"));
 const LoginPage = lazy(() => import("./pages/auth/login-page"));
 const RegisterPage = lazy(() => import("./pages/auth/register-page"));
 
+const CreateRoomPage = lazy(() => import("./pages/room/create-room-page"));
+const ListRoomPage = lazy(() => import("./pages/room/list-room-page"));
+const RoomDetailsPage = lazy(() => import("./pages/room/room-details-page"));
+
 function App() {
+  const authState = useSelector((state: RootState) => state.authState);
+
+  useEffect(() => {
+    appDispatch(getLastRoomsAction());
+  }, []);
+
   return (
     <BrowserRouter>
       <AuthContext>
-        <LayoutContext>
-          <Routes>
-            <Route
-              index
-              element={
-                /* Suspense componentinin çalışma mantığı şu şekildedir:
+        <WebsocketContext>
+          <LayoutContext>
+            <Routes>
+              <Route
+                index
+                element={
+                  /* Suspense componentinin çalışma mantığı şu şekildedir:
               Child'da bir lazy loadable component olmalı, fallback
               property'sinde ise preloaded bir component olmalı. Lazy'den
               gelen component yüklenene kadar fallback'te belirtilen
@@ -41,51 +55,64 @@ function App() {
               (veya başka bir deyişle sunucudan gerekli javascript
               dosyası çekildiğinde) fallback componentini kaldırıp
               yerine gelen componenti gösterir. */
-                <Suspense fallback={<>Loading...</>}>
-                  <HomePage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="chat"
-              element={
-                <Suspense fallback={<>Loading...</>}>
-                  <ChatPage />
-                </Suspense>
-              }
-            />
+                  <Suspense fallback={<>Loading...</>}>
+                    <HomePage />
+                  </Suspense>
+                }
+              />
 
-            <Route path="room">
-              <Route
-                path="create"
-                element={
-                  <Suspense fallback={<>Loading...</>}>
-                    <CreateRoomPage />
-                  </Suspense>
-                }
-              />
-            </Route>
+              <Route path="room">
+                {authState.user ? (
+                  <Route
+                    path="create"
+                    element={
+                      <Suspense fallback={<>Loading...</>}>
+                        <CreateRoomPage />
+                      </Suspense>
+                    }
+                  />
+                ) : null}
 
-            <Route path="auth">
-              <Route
-                path="login"
-                element={
-                  <Suspense fallback={<>Loading...</>}>
-                    <LoginPage />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="register"
-                element={
-                  <Suspense fallback={<>Loading...</>}>
-                    <RegisterPage />
-                  </Suspense>
-                }
-              />
-            </Route>
-          </Routes>
-        </LayoutContext>
+                <Route
+                  path="list"
+                  element={
+                    <Suspense fallback={<>Loading...</>}>
+                      <ListRoomPage />
+                    </Suspense>
+                  }
+                />
+
+                <Route
+                  path=":roomId"
+                  element={
+                    <Suspense fallback={<>Loading...</>}>
+                      <RoomDetailsPage />
+                    </Suspense>
+                  }
+                />
+              </Route>
+
+              <Route path="auth">
+                <Route
+                  path="login"
+                  element={
+                    <Suspense fallback={<>Loading...</>}>
+                      <LoginPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="register"
+                  element={
+                    <Suspense fallback={<>Loading...</>}>
+                      <RegisterPage />
+                    </Suspense>
+                  }
+                />
+              </Route>
+            </Routes>
+          </LayoutContext>
+        </WebsocketContext>
       </AuthContext>
     </BrowserRouter>
   );

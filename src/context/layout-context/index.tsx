@@ -44,8 +44,6 @@ export default function LayoutContext(props: LayoutContextComponentPropsType) {
     setIsAuthUrl(location.pathname.startsWith("/auth"));
   }, [location]);
 
-  console.log(">> 🚀 file: index.tsx:27 🚀 isAuthUrl:", isAuthUrl);
-
   /* Şimdilik layout-context'in herhangi bir data tutmasına gerek yok. */
   const contextValue: LayoutContextType = {};
 

@@ -1,7 +1,11 @@
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import RoomBox from "../../components/room-box";
+import { RootState } from "../../redux/store";
 
 export default function HomePage() {
+  const roomState = useSelector((state: RootState) => state.roomState);
+
   return (
     <>
       <section className="py-5 text-center container">
@@ -26,12 +30,13 @@ export default function HomePage() {
       <div className="album py-5 bg-body-tertiary">
         <div className="container">
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            <RoomBox />
-            <RoomBox />
-            <RoomBox />
-            <RoomBox />
-            <RoomBox />
-            <RoomBox />
+            {roomState.lastRoomsInitialized
+              ? roomState.lastRooms.map((item, index) => {
+                  console.log(">> ITEM", item);
+
+                  return <RoomBox room={item} key={index} />;
+                })
+              : null}
           </div>
         </div>
       </div>

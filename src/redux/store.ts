@@ -1,9 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slice/authSlice";
+import roomReducer from "./slice/roomSlice";
+
+/* Slice kelime anlamı:  */
 
 export const store = configureStore({
   reducer: {
     authState: authReducer,
+    roomState: roomReducer,
   },
 });
 

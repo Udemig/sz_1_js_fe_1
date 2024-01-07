@@ -9,8 +9,8 @@ import {
 } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { AuthStateType } from "../../redux/slice/authSlice";
-import { RootState } from "../../redux/store";
+import { AuthStateType, logoutAction } from "../../redux/slice/authSlice";
+import { RootState, appDispatch } from "../../redux/store";
 
 export default function Header() {
   const authState = useSelector<RootState, AuthStateType>(
@@ -21,9 +21,9 @@ export default function Header() {
   return (
     <header>
       <Navbar expand={expand} className="bg-body-tertiary mb-3">
-        <Container fluid>
+        <Container>
           <Link to="/" className="navbar-brand">
-            Chat
+            Chat App
           </Link>
           <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
           <Navbar.Offcanvas
@@ -39,11 +39,23 @@ export default function Header() {
             <Offcanvas.Body>
               <Nav className="justify-content-end flex-grow-1 pe-3">
                 <Link to="/" className="nav-link">
-                  Home
+                  Anasayfa
                 </Link>
-                <Link to="/chat" className="nav-link">
-                  Chat
-                </Link>
+
+                <NavDropdown
+                  title="Sohbet Odası"
+                  id={`offcanvasNavbarDropdown-expand-${expand}`}
+                >
+                  <Link to="/room/list" className="dropdown-item">
+                    Listele
+                  </Link>
+
+                  {authState.user ? (
+                    <Link to="/room/create" className="dropdown-item">
+                      Yeni Oluştur
+                    </Link>
+                  ) : null}
+                </NavDropdown>
 
                 {authState.user ? (
                   <Form className="d-flex">
@@ -54,7 +66,16 @@ export default function Header() {
                     >
                       {authState.user.username}
                     </Link>
-                    <Button variant="outline-danger">Logout</Button>
+                    <Button
+                      variant="outline-danger"
+                      onClick={(e) => {
+                        if (confirm("Çıkış yapmak istiyor musunuz?")) {
+                          appDispatch(logoutAction());
+                        }
+                      }}
+                    >
+                      Logout
+                    </Button>
                   </Form>
                 ) : (
                   <NavDropdown

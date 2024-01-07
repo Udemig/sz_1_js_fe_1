@@ -8,6 +8,7 @@ import {
   loginAction,
 } from "../../../redux/slice/authSlice";
 import { RootState, appDispatch } from "../../../redux/store";
+import { formJson } from "../../../utils/functions";
 
 export default function LoginPage() {
   const authState = useSelector<RootState, AuthStateType>(
@@ -28,8 +29,8 @@ export default function LoginPage() {
 
   function onFormSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const value = Object.fromEntries(data.entries());
+    const value = formJson(event.currentTarget);
+
     console.log(">> 🚀 file: index.tsx:11 🚀 value:", value);
 
     /*
