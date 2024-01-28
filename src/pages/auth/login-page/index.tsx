@@ -1,4 +1,4 @@
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
 import { Alert } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,18 +14,20 @@ export default function LoginPage() {
   const authState = useSelector<RootState, AuthStateType>(
     (state) => state.authState
   );
-
   const navigate = useNavigate();
 
-  /* Tarayıcıyı yönlendirme işlemleri iki yerde yapmak mümkün.
-  Bunlardan birincisi ilgili componentte kontrollü şekilde yönlendirmek.
-  İkincisi de bütün yönlendirmelerin bulunduğu bir context componenti
-  oluşturup oradan yönetmek. Fakat bu ikinci yöntemin bir dezavantajı
-  var, o da bazen işlerin çıkmaza girmesi. Bu yüzden yönlendirmeleri
-   */
-  if (authState.user) {
-    navigate("/");
-  }
+  useEffect(() => {
+    /* Tarayıcıyı yönlendirme işlemleri iki yerde yapmak mümkün.
+    Bunlardan birincisi ilgili componentte kontrollü şekilde yönlendirmek.
+    İkincisi de bütün yönlendirmelerin bulunduğu bir context componenti
+    oluşturup oradan yönetmek. Fakat bu ikinci yöntemin bir dezavantajı
+    var, o da bazen işlerin çıkmaza girmesi. Bu yüzden yönlendirmeleri
+    aslında context içerisinde yapsak daha kontrollü olur. */
+
+    if (authState.user) {
+      navigate("/");
+    }
+  }, [authState.user]);
 
   function onFormSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

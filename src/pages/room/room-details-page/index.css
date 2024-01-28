@@ -1,0 +1,7 @@
+.messages-container {
+}
+
+.messages-container > .card-body {
+  height: 400px;
+  overflow: scroll;
+}

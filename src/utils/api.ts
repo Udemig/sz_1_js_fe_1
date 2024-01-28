@@ -25,3 +25,37 @@ export type ChatApiResponseType<T> =
       status: "success";
       data: T;
     };
+
+export type MessageType = {
+  _id: string;
+  userId: string;
+  roomId: string;
+  type: string;
+  text: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type RoomType = {
+  _id: string;
+  userId: string;
+  name: string;
+  visibility: "public" | "private";
+  maxClient: number;
+};
+
+export type UserType = {
+  _id: string;
+  username: string;
+  email?: string;
+  firstname?: string;
+  lastname?: string;
+  gender?: "male" | "female" | "prefer_not_to_say";
+};
+
+export type RoomInfoType = {
+  room: RoomType;
+  peers: UserType[];
+};
+
+// TODO Room response type'ını buraya yaz.

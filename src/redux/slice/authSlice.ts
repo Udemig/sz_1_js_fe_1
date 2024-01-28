@@ -169,11 +169,13 @@ export const authSlice = createSlice({
     builder.addCase(getUserInfoAction.fulfilled, (state, action) => {
       if (action.payload.status === "success") {
         state.user = action.payload.data.user;
-      } else {
+      } else if (action.payload.status === "error") {
         localStorage.removeItem("token");
         state.token = null;
         state.user = null;
         state.errorMessage = action.payload.errorMessage;
+      } else {
+        // TOOD API çalışmadığında hiç cevap gelmez, bu durumu kontrol et.
       }
 
       state.requestStatus = "fulfilled";

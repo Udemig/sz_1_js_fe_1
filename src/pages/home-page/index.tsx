@@ -32,8 +32,6 @@ export default function HomePage() {
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             {roomState.lastRoomsInitialized
               ? roomState.lastRooms.map((item, index) => {
-                  console.log(">> ITEM", item);
-
                   return <RoomBox room={item} key={index} />;
                 })
               : null}
