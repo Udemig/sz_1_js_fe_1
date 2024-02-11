@@ -109,7 +109,7 @@ export default function WebsocketContext(props: WebsocketContextPropsType) {
     // TODO Reconnection işlemi için daha iyi bir yöntem bul.
     showSwal("error", "Websocket bağlantısı koptu, sayfa tekrar.");
     setTimeout(() => {
-      document.location.reload();
+      //document.location.reload();
     }, 3_000);
   };
 
